@@ -1,0 +1,119 @@
+<!--Copyright (C) 2013  Juan Luis Martin Acal
+
+Este programa es software libre: usted puede redistribuirlo y/o modificarlo
+bajo los términos de la Licencia Pública General GNU publicada
+por la Fundación para el Software Libre, ya sea la versión 3
+de la Licencia, o (a su elección) cualquier versión posterior.
+
+Este programa se distribuye con la esperanza de que sea útil, pero
+SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita
+MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO.
+Consulte los detalles de la Licencia Pública General GNU para obtener
+una información más detallada.
+
+Debería haber recibido una copia de la Licencia Pública General GNU
+junto a este programa.
+En caso contrario, consulte <http://www.gnu.org/licenses/>.
+
+
+                contact:  jlmacal@gmail.es
+-->
+
+<html>
+<head>
+	<style type="text/css" media="all"> 
+		@import "zetsu.css";
+	</style>	
+</head>
+<body>
+<div id="pagina">
+<%@ include file="./cabecera.psp"%>
+<center><img src="./imagenes/cabecera.jpg"></center>
+
+<%
+import hashlib
+from pysqlite2 import dbapi2
+
+sesionWeb['sesion'] = form.getfirst('sesion')
+sesionWeb['username'] = form.getfirst('username')
+sesionWeb['password'] = form.getfirst('password')
+sesionWeb['rol'] = form.getfirst('rol')
+sesionWeb['exceptionErrorMsg'] = None
+sesionWeb.save()
+
+if (sesionWeb['sesion']==None):
+%>
+
+	<div id="menu">
+		<form action="login.psp" method="post" name="formLogin">
+		<fieldset class="greenFieldSet">
+			<div>
+				<label class="loginFormDivLabel">Nombre de usuario:</label>
+				<input class="loginFormDivInput" value="" name="username">
+			</div>
+			<br />
+			<div>
+				<label class="loginFormDivLabel">Password:</label>
+				<input class="loginFormDivInput" value="" name="password" type="password">
+			</div>	
+			<br />
+			<div>
+				<input class="zetsuBoton" type="submit" value="Login" name="button1">
+			</div>
+			<input name="sesion" type="hidden" value="postLogin">
+		</fieldset>
+		</form>
+	</div><!--menu-->
+		
+	<!--<div id="contenido"></div>--><!--contenido-->	
+	<!--<div id="pie"></div></div>-->
+	
+</div> <!--pagina-->
+</body>
+</html>	
+
+<%
+elif (sesionWeb['sesion']=="postLogin"):	
+	
+	consultaLogin=False
+	try:
+		conexionBD = dbapi2.connect("/opt/zetsuBd/zetsu.sqlite")
+		cursorBD = conexionBD.cursor()
+	except Exception,e:
+		sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+		sesionWeb.save()
+		util.redirect(req,"error.psp")
+	else:
+		try:
+			cadenaClave = hashlib.sha512(sesionWeb['password']).hexdigest()
+			cursorBD.execute("SELECT * FROM login WHERE username='"+sesionWeb['username']+"'")
+			row = cursorBD.fetchall()
+			conexionBD.close()
+		except Exception,e:
+			sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+			sesionWeb.save()
+			util.redirect(req,"error.psp")
+		else:	
+			try:
+				consultaLogin = (cadenaClave==row[0][1])
+			except Exception,e:
+				sesionWeb['exceptionErrorMsg']="ERROR2: Usuario/Clave incorrectos"
+				sesionWeb.save()
+				util.redirect(req,"error.psp")
+			else:
+				if (consultaLogin):
+					sesionWeb['sesion']="granted"
+					sesionWeb['rol']=row[0][2]
+					sesionWeb.save()
+					util.redirect(req,"consultaBD.psp")
+				else:
+					sesionWeb['exceptionErrorMsg']="ERROR1: Usuario/Clave incorrectos"
+					sesionWeb.save()
+					util.redirect(req,"error.psp")
+else:
+	sesionWeb['exceptionErrorMsg']="ERROR: Estado de sesion ilegal"
+	sesionWeb.save()
+	util.redirect(req,"error.psp")
+
+#end/if/elif/else
+%>

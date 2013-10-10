@@ -1,0 +1,148 @@
+<!--Copyright (C) 2013  Juan Luis Martin Acal
+
+Este programa es software libre: usted puede redistribuirlo y/o modificarlo
+bajo los términos de la Licencia Pública General GNU publicada
+por la Fundación para el Software Libre, ya sea la versión 3
+de la Licencia, o (a su elección) cualquier versión posterior.
+
+Este programa se distribuye con la esperanza de que sea útil, pero
+SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita
+MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO.
+Consulte los detalles de la Licencia Pública General GNU para obtener
+una información más detallada.
+
+Debería haber recibido una copia de la Licencia Pública General GNU
+junto a este programa.
+En caso contrario, consulte <http://www.gnu.org/licenses/>.
+
+
+                contact:  jlmacal@gmail.es
+-->
+
+<%	
+from pysqlite2 import dbapi2
+from datetime import datetime
+import glob
+import re
+
+datosXconsulta = 10
+cadenaTabla1 = 'connections'
+cadenaTabla2 = 'tablaLogin'
+cadenaTabla3 = 'tablaCmd'
+
+inicioSesion = []
+comandoSesion = []
+
+try:
+	conexionBD = dbapi2.connect("/opt/dionaea/var/dionaea/logsql.sqlite")
+	cursorBD = conexionBD.cursor()
+	cursorBD.execute("PRAGMA TABLE_INFO('" + str(cadenaTabla1) + "')")
+	rowCabecera1 = cursorBD.fetchall()
+	cadenaPKey1=rowCabecera1[0][1]
+	cursorBD.execute("SELECT * FROM " + str(cadenaTabla1) + " ORDER BY " + cadenaPKey1 + " DESC LIMIT " + str(datosXconsulta))
+	rows1 = cursorBD.fetchall()
+except Exception,e:
+	sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+	sesionWeb.save()
+	util.redirect(req,"error.psp")
+
+for file in glob.glob("/opt/kippo/log/kippo.log*"):
+	archivoLog=open(file,"r")
+	patronFechaIpLoginPassSesion = re.compile('(^[0-9\-]+) ([0-9\:]+)\+[0-9]+ \[SSHService ssh-userauth on HoneyPotTransport,([0-9]+),([0-9.]+)\] login attempt \[([a-zA-Z0-9\-\[\]\#\.\:\%\@\&\_]+)\/([a-zA-Z0-9\-\[\]\#\.\:\%\@\&\_]+)\] ([a-z]+)$')
+	patronFechaIpCmd = re.compile('(^[0-9\-]+)\s([0-9\:]+)\+[0-9]+ \[SSHChannel session \(([0-9]+)\) on SSHService ssh-connection on HoneyPotTransport,([0-9]+),([0-9.]+)\] CMD\: ([a-zA-Z0-9\-\[\]\#\.\:\%\@\&\"\'\_\s\\\/]+)$')
+	for linea in archivoLog:
+		inicioSesion = inicioSesion + re.findall(patronFechaIpLoginPassSesion,linea)
+		comandoSesion = comandoSesion + re.findall(patronFechaIpCmd,linea)
+	archivoLog.close()
+#end/for
+%>
+
+		<table id="tablaConexiones">
+
+<%
+for row in rows1:
+%>
+
+			<tr>
+
+<%
+	for posicion in range(len(row)):
+		#if (str(rowCabecera1[posicion][1])=="connection_timestamp"):
+		if (type(row[posicion]).__name__=='float'):
+			objetoDate=datetime.fromtimestamp(float(row[posicion])).strftime("%Y-%m-%d %H:%M:%S")
+%>
+
+				<td>
+				<%=objetoDate%>
+				</td>
+
+<%
+		else:
+%>
+
+				<td>
+				<%=unicode(row[posicion]).encode("utf-8")%>
+				</td>
+
+<%
+	#end/if/else
+%>
+
+			</tr>
+
+<%
+#end/for
+%>
+
+		</table>
+		<br />
+		<table id="tablaLogin">
+
+<%
+for tupla in reversed(inicioSesion[-datosXconsulta:]):
+%>
+
+			<tr>
+	
+<%
+	for celda in tupla:
+%>
+
+				<td><%=celda%></td>
+
+<%
+	#end/for/
+%>
+			</tr>
+
+<%
+#end/for/
+%>
+
+		</table>
+		<br />
+		<table id="tablaCmd">
+
+<%
+for tupla in reversed(comandoSesion[-datosXconsulta:]):
+%>
+
+			<tr>
+	
+<%
+	for celda in tupla:
+%>
+
+				<td><%=celda%></td>
+
+<%
+	#end/for/
+%>
+
+			</tr>
+
+<%
+#end/for/
+%>
+
+</table>

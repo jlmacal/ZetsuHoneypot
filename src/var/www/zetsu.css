@@ -1,0 +1,323 @@
+body {
+	background-color: #ffffff;
+	text-align: center;
+	font-family: sans-serif,arial,verdana;
+	font-size: 10pt;
+	margin: 0px auto;
+}
+table {
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	
+	background-color: rgb(100,225,55);
+	background: linear-background(top, rgba(225,235,205,0.75)25%,  rgba(205,235,142,0.75)75%);
+	background: -moz-linear-gradient(top, rgba(225,235,205,0.75)25%,  rgba(205,235,142,0.75)75%);
+	background: linear-gradient(top, rgba(225,235,205,0.75)25%,  rgba(205,235,142,0.75)75%);
+	background: -o-linear-gradient(top, rgba(225,235,205,0.75)25%,  rgba(205,235,142,0.75)75%);
+	background: -webkit-linear-gradient(top, rgba(225,235,205,0.75)25%,  rgba(205,235,142,0.75)75%);
+	background: -ms-linear-gradient(top, rgba(225,235,205,0.75)25%,  rgba(205,235,142,0.75)75%);
+	
+	text-align: left;
+	margin: 0px auto;
+	border: 1.5px solid rgb(60,130,10);
+}
+tr:hover {
+	background-color: rgba(125,150,160,0.75);
+	color: rgb(255,255,255);
+}
+form input {
+  text-align: center;
+  width: 50px;
+}
+a {
+  color: #000000;
+  font-size: 10pt;
+}
+div#pagina {
+	margin: 0 auto;
+	text-align: left;
+	width: 1024px;
+}
+div#pagina div#cabecera {
+	margin:auto auto 20px auto;
+}
+div#pagina div#cabecera div#titulo {
+	height: 60px;
+}
+div#pagina div#cabecera div#logotipoI {
+	float: left;
+	width: 200px;
+	height: 60px;
+	background-image: url(./imagenes/logoUgr.jpg);
+}
+div#pagina div#cabecera div#logotipoD {
+	float: right;
+	width: 200px;
+	height: 60px;
+	background-image: url(./imagenes/logoCsirc.jpg);
+	background-repeat: no-repeat;
+}
+div#pagina div#cabecera div#navegador {
+	float: center;
+	height: 60px;
+}
+
+div#pagina div#cabecera div#navegador table#tablaNavegador {
+	border-spacing: 0px;
+	text-align: center;
+}
+
+div#pagina div#cabecera div#navegador table#tablaNavegador td {
+	background-color: rgb(100,225,55);
+	background: linear-background(top, rgb(100,225,55) 0%, rgb(70,155,10));
+	background: -moz-linear-gradient(top, rgb(100,225,55) 0%, rgb(70,155,10));
+	background: linear-gradient(top, rgb(100,225,55) 0%, rgb(70,155,10));
+	background: -o-linear-gradient(top, rgb(100,225,55) 0%, rgb(70,155,10));
+	background: -webkit-linear-gradient(top, rgb(100,225,55) 0%, rgb(70,155,10));
+	background: -ms-linear-gradient(top, rgb(100,225,55) 0%, rgb(70,155,10));
+	
+	-moz-box-shadow:
+		0px 1px 3px rgba(000,000,000,0.5),
+		inset 0px 0px 10px rgba(087,087,087,0.7);
+	-webkit-box-shadow:
+		0px 1px 3px rgba(000,000,000,0.5),
+		inset 0px 0px 10px rgba(087,087,087,0.7);
+	box-shadow:
+		0px 1px 3px rgba(000,000,000,0.5),
+		inset 0px 0px 10px rgba(087,087,087,0.7);
+	text-shadow:
+		0px -1px 0px rgba(000,000,000,0.4),
+		0px 1px 0px rgba(255,255,255,0.3);
+	
+	height: 30px;
+	width: 128px;
+}
+div#pagina div#cabecera div#navegador table#tablaNavegador td:hover {	
+	background-color: rgb(100,240,114);
+	background: linear-background(top, rgb(60,130,10)25%, rgb(70,155,10)75%);
+	background: -moz-linear-gradient(top, rgb(60,130,10)25%, rgb(70,155,10)75%);
+	background: linear-gradient(top, rgb(60,130,10)25%, rgb(70,155,10)75%);
+	background: -o-linear-gradient(top, rgb(60,130,10)25%, rgb(70,155,10)75%);
+	background: -webkit-linear-gradient(top, rgb(60,130,10)25%, rgb(70,155,10)75%);
+	background: -ms-linear-gradient(top, rgb(60,130,10)25%, rgb(70,155,10)75%);
+}
+div#pagina div#cabecera div#navegador table#tablaNavegador a {
+	color: rgb(255,255,255);
+	text-decoration: none;
+	font-size: 10pt;
+}
+div#pagina div#menu {
+	margin: auto auto  auto 5px;
+	text-align: center;
+	float: left;
+}
+div#pagina div#contenido {
+	overflow: auto;
+	min-height:670px;
+	margin: auto;
+	float: right;
+	width: 75%;
+	background-image: url(./imagenes/logoUgr.gif);
+	background-position: center;
+	background-repeat: no-repeat;
+}
+div#pagina div#contenidoMonitor {
+	overflow: auto;
+	min-height:670px;
+	margin: auto;
+	float: center;
+	width: 100%;
+	background-image: url(./imagenes/logoUgr.gif);
+	background-position: center;
+	background-repeat: no-repeat;
+}
+div#pagina div#pie {
+	clear: both;
+}
+div#pagina div#basicGChart {
+	overflow: auto;
+	float: left;
+	height: 80%;
+}
+div#pagina div#capaFlotante {
+	position: absolute;
+	display: none;
+	font-family: Arial;
+	font-size: 0.8em;
+	border: 1px solid #808080;
+	background-color: #ffffff;
+}
+.confFormCheckBox {
+	margin: 15px auto;
+	width: 100px;
+	text-align: left;
+}
+.confFormDivInput {
+	margin: 10px auto 15px;
+	width: 100px;
+	text-align: left;
+}
+.confFormDivLabel {
+	margin: 10px auto;
+	float: left;
+	width: 200px;
+	text-align: left;
+}
+.graficaFormDivInput {
+	width: 50px;
+	text-align: center;
+}
+.greenFieldSet {
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	
+	background-color: rgb(100,225,55);
+	background: linear-background(top, rgb(225,235,205)25%,  rgb(205,235,142)75%);
+	background: -moz-linear-gradient(top, rgb(225,235,205)25%,  rgb(205,235,142)75%);
+	background: linear-gradient(top, rgb(225,235,205)25%,  rgb(205,235,142)75%);
+	background: -o-linear-gradient(top, rgb(225,235,205)25%,  rgb(205,235,142)75%);
+	background: -webkit-linear-gradient(top, rgb(225,235,205)25%,  rgb(205,235,142)75%);
+	background: -ms-linear-gradient(top, rgb(225,235,205)25%,  rgb(205,235,142)75%);
+	
+	border: 2px solid rgb(60,130,10);
+	margin: 50px auto;
+	
+	-moz-box-shadow: 0px 5px 5px rgba(000,000,000,0.5);
+	-webkit-box-shadow: 0px 1px 5px rgba(000,000,000,0.5);
+	box-shadow: 2px 2px 5px rgba(000,000,000,0.5);
+}
+.loginFormDivInput {
+	width: 100px;
+	text-align: left;
+}
+.loginFormDivLabel {
+	float: left;
+	width: 150px;
+	text-align: left;
+}
+.zetsuBoton {
+	font-family: sans-serif,arial,verdana;
+	font-size: 10pt;
+	color: #ffffff;
+	margin: 10px auto;
+	padding: 3px 3px;
+	
+	background: -moz-linear-gradient(
+		top,
+		rgb(100,225,55) 0%,
+		rgb(70,155,10));
+	background: -webkit-gradient(
+		linear, left top, left bottom, 
+		from(rgb(100,225,55)), to(rgb(70,155,10)));
+	
+	-moz-border-radius: 2.5px;
+	-webkit-border-radius: 2.5px;
+	border-radius: 2.5px;
+	border: 0px;
+	-moz-box-shadow:
+		0px 1px 3px rgba(000,000,000,0.5),
+		inset 0px 0px 10px rgba(087,087,087,0.7);
+	-webkit-box-shadow:
+		0px 1px 3px rgba(000,000,000,0.5),
+		inset 0px 0px 10px rgba(087,087,087,0.7);
+	box-shadow:
+		0px 1px 3px rgba(000,000,000,0.5),
+		inset 0px 0px 10px rgba(087,087,087,0.7);
+	text-shadow:
+		0px -1px 0px rgba(000,000,000,0.4),
+		0px 1px 0px rgba(255,255,255,0.3);
+}
+.zetsuBoton:hover {
+	background: -moz-linear-gradient(
+		top,
+		rgb(60,130,10)20%,
+		rgb(70,155,10)75%);
+	background: -webkit-gradient(
+		linear, left top, left bottom, 
+		from(rgb(60,130,10)), to(rgb(70,155,10)));
+}
+.zetsuBotonLargo {
+	font-family: sans-serif,arial,verdana;
+	font-size: 10pt;
+	color: #ffffff;
+	margin: 10px auto;
+	padding: 3px 3px;
+	width: 150px;
+	
+	background: -moz-linear-gradient(
+		top,
+		rgb(100,225,55) 0%,
+		rgb(70,155,10));
+	background: -webkit-gradient(
+		linear, left top, left bottom, 
+		from(rgb(100,225,55)), to(rgb(70,155,10)));
+	
+	-moz-border-radius: 2.5px;
+	-webkit-border-radius: 2.5px;
+	border-radius: 2.5px;
+	border: 0px;
+	-moz-box-shadow:
+		0px 1px 3px rgba(000,000,000,0.5),
+		inset 0px 0px 10px rgba(087,087,087,0.7);
+	-webkit-box-shadow:
+		0px 1px 3px rgba(000,000,000,0.5),
+		inset 0px 0px 10px rgba(087,087,087,0.7);
+	box-shadow:
+		0px 1px 3px rgba(000,000,000,0.5),
+		inset 0px 0px 10px rgba(087,087,087,0.7);
+	text-shadow:
+		0px -1px 0px rgba(000,000,000,0.4),
+		0px 1px 0px rgba(255,255,255,0.3);
+}
+.zetsuBotonLargo:hover {
+	background: -moz-linear-gradient(
+		top,
+		rgb(60,130,10)20%,
+		rgb(70,155,10)75%);
+	background: -webkit-gradient(
+		linear, left top, left bottom, 
+		from(rgb(60,130,10)), to(rgb(70,155,10)));
+}
+.zetsuBotonErrorAtras {
+	font-family: sans-serif,arial,verdana;
+	font-size: 10pt;
+	color: #ffffff;
+	margin: 10px auto;
+	padding: 10px 10px;
+	align: center;
+	
+	background: -moz-linear-gradient(top,
+		rgb(255,50,25)25%,
+		rgb(205,15,5)75%);
+	background: -webkit-gradient(
+		linear, left top, left bottom, 
+		from(rgb(255,50,25)), to(rgb(205,15,5)));
+	
+	-moz-border-radius: 2.5px;
+	-webkit-border-radius: 2.5px;
+	border-radius: 2.5px;
+	border: 0px;
+	-moz-box-shadow:
+		0px 1px 3px rgba(000,000,000,0.5),
+		inset 0px 0px 10px rgba(087,087,087,0.7);
+	-webkit-box-shadow:
+		0px 1px 3px rgba(000,000,000,0.5),
+		inset 0px 0px 10px rgba(087,087,087,0.7);
+	box-shadow:
+		0px 1px 3px rgba(000,000,000,0.5),
+		inset 0px 0px 10px rgba(087,087,087,0.7);
+	text-shadow:
+		0px -1px 0px rgba(000,000,000,0.4),
+		0px 1px 0px rgba(255,255,255,0.3);
+}
+.zetsuBotonErrorAtras:hover {
+	background: -moz-linear-gradient(
+		top,
+		rgb(205,15,5)25%,
+		rgb(180,3,3)75%);
+	background: -webkit-gradient(
+		linear, left top, left bottom, 
+		from(rgb(205,15,5)), to(rgb(180,3,3)));
+}

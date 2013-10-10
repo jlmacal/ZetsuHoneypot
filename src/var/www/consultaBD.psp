@@ -1,0 +1,237 @@
+<!--Copyright (C) 2013  Juan Luis Martin Acal
+
+Este programa es software libre: usted puede redistribuirlo y/o modificarlo
+bajo los términos de la Licencia Pública General GNU publicada
+por la Fundación para el Software Libre, ya sea la versión 3
+de la Licencia, o (a su elección) cualquier versión posterior.
+
+Este programa se distribuye con la esperanza de que sea útil, pero
+SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita
+MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO.
+Consulte los detalles de la Licencia Pública General GNU para obtener
+una información más detallada.
+
+Debería haber recibido una copia de la Licencia Pública General GNU
+junto a este programa.
+En caso contrario, consulte <http://www.gnu.org/licenses/>.
+
+
+                contact:  jlmacal@gmail.es
+-->
+
+<html>
+<head>
+	<style type="text/css" media="all"> 
+		@import "zetsu.css";
+	</style>
+	<script type="text/javascript" src="js/zetsuFunciones.js"></script>
+</head>
+<body>
+<div id="pagina">
+<%@ include file="./cabecera.psp"%>
+<%@ include file="./controlSesion.psp"%>
+
+	<div id="capaFlotante"><span id="posicion"></span></div>
+	<div id="contenido">
+		<center>
+			<form action="./consultaBD.psp" method="post" name="formConsultas">
+				<textarea name="consultaPersonalizada" cols="75%" rows="2"></textarea>
+				<br />
+				<input type="submit" class="zetsuBotonLargo" name="botonConsulta" value="Enviar consulta">
+			</form>
+		</center>
+		<table id="tablaConsulta">
+
+<%
+import re
+from pysqlite2 import dbapi2
+from datetime import datetime
+
+datosXconsulta = 20
+cadenaDesplazar = form.getfirst('desplazar')
+cadenaPosicion = form.getfirst('posicion')
+cadenaTabla = form.getfirst('tablasDionaea')
+cadenaConsulta = form.getfirst('consultaPersonalizada')
+
+if (not cadenaDesplazar) and (not cadenaPosicion) and (not cadenaTabla):
+	cadenaTabla = 'connections'
+	indice = 0
+elif (cadenaDesplazar=="="):
+	indice = 0
+elif (cadenaDesplazar=="+"):
+	indice = int(cadenaPosicion) + datosXconsulta
+elif (cadenaDesplazar=="-"):
+	indice = int(cadenaPosicion) - datosXconsulta
+else:
+	cadenaTabla = 'connections'
+	indice = 0
+
+try:
+	conexionBD = dbapi2.connect("/opt/dionaea/var/dionaea/logsql.sqlite")
+	cursorBD = conexionBD.cursor()
+except Exception,e:
+	sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+	sesionWeb.save()
+	util.redirect(req,"error.psp")
+	
+try:	
+	cursorBD.execute("PRAGMA TABLE_INFO('" + str(cadenaTabla) + "')")
+	rowCabecera = cursorBD.fetchall()
+	cadenaPKey=rowCabecera[0][1]
+except Exception,e:
+	sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+	sesionWeb.save()
+	util.redirect(req,"error.psp")
+		
+if (not cadenaConsulta):
+	try:
+		cursorBD.execute("SELECT MAX(" + cadenaPKey + ") FROM " + cadenaTabla)
+		maxIdTabla = cursorBD.fetchone()[0]
+	except Exception,e:
+		sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+		sesionWeb.save()
+		util.redirect(req,"error.psp")
+		
+	if not maxIdTabla:
+		maxIdTabla = 0
+	if (maxIdTabla <= indice):
+		indice = maxIdTabla
+	if (indice < datosXconsulta):
+		indice = datosXconsulta
+
+	try:
+		cursorBD.execute("SELECT * FROM " + str(cadenaTabla) + " WHERE (" + cadenaPKey + "<=" + str( maxIdTabla - indice + 20) + " AND " + cadenaPKey + ">=" + str(maxIdTabla - indice) + " ) ORDER BY " + cadenaPKey + " DESC")
+		rows = cursorBD.fetchall()
+	except Exception,e:
+		sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+		sesionWeb.save()
+		util.redirect(req,"error.psp")
+else:
+
+	try:
+		cadenaTabla = re.findall('FROM ([a-zA-Z0-9\-\[\]\#\.\:\%\@\&\_]+) WHERE',cadenaConsulta)[0]
+		cursorBD.execute("PRAGMA TABLE_INFO('" + str(cadenaTabla) + "')")
+		rowCabecera = cursorBD.fetchall()
+		cadenaPKey=rowCabecera[0][1]
+	except Exception,e:
+		sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+		sesionWeb.save()
+		util.redirect(req,"error.psp")
+
+	try:
+		cursorBD.execute(cadenaConsulta)
+		rows = cursorBD.fetchall()
+	except Exception,e:
+		sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+		sesionWeb.save()
+		util.redirect(req,"error.psp")
+
+for row in rows:
+%>
+
+			<!--<tr onmouseover="javascript:this.style.background='#3f5e74';javascript:this.style.color='#ffffff';" onmouseout="javascript:this.style.background='#ffffff';javascript:this.style.color='#000000';">-->
+			<tr>
+
+<%
+	for posicion in range(len(row)):
+		#if (not cadenaConsulta) and (str(rowCabecera[posicion][1])<>"connection_timestamp"):
+		if (not cadenaConsulta) and (type(row[posicion]).__name__<>"float"):
+%>
+
+				<td onmouseover="showdiv(event,'<%=str(rowCabecera[posicion][1])%>');" onmousemove="showdiv(event,<%=str(rowCabecera[posicion][1])%>);" onmouseout="javascript:document.getElementById('capaFlotante').style.display='none';" onclick="consultaCelda('<%=cadenaTabla%>','<%=cadenaPKey%>','<%=str(rowCabecera[posicion][1])%>','<%=unicode(row[posicion]).encode("utf-8")%>')">
+				<%=unicode(row[posicion]).encode("utf-8")%>
+				</td>
+
+<%
+		elif (not cadenaConsulta) and (type(row[posicion]).__name__=="float"):
+
+			objetoMedioDiaAtras= float(row[posicion])-86400.0
+			objetoMedioDiaAdelante=float(row[posicion])+86400.0
+			objetoDate=datetime.fromtimestamp(float(row[posicion])).strftime("%Y-%m-%d %H:%M:%S")
+%>
+
+				<td onmouseover="showdiv(event,'<%=str(rowCabecera[posicion][1])%>');" onmouseout="javascript:document.getElementById('capaFlotante').style.display='none';" onclick="consultaCeldaFecha('<%=cadenaTabla%>','<%=cadenaPKey%>','<%=str(rowCabecera[posicion][1])%>','<%=objetoMedioDiaAtras%>','<%=objetoMedioDiaAdelante%>')">
+				<%=objetoDate%>
+				</td>
+
+<%
+		else:
+			if (type(row[posicion]).__name__<>"float"):
+%>
+
+				<td onmouseover="showdiv(event,'<%=str(rowCabecera[posicion][1])%>');" onmousemove="showdiv(event,<%=str(rowCabecera[posicion][1])%>);" onmouseout="javascript:document.getElementById('capaFlotante').style.display='none';" onclick="consultaCelda('<%=cadenaTabla%>','<%=cadenaPKey%>','<%=str(rowCabecera[posicion][1])%>','<%=unicode(row[posicion]).encode("utf-8")%>')">
+				<%=unicode(row[posicion]).encode("utf-8")%>
+				</td>
+
+<%
+			else:
+				objetoMedioDiaAtras= float(row[posicion])-86400.0
+				objetoMedioDiaAdelante=float(row[posicion])+86400.0
+				objetoDate=datetime.fromtimestamp(float(row[posicion])).strftime("%Y-%m-%d %H:%M:%S")
+%>		
+
+				<td onmouseover="showdiv(event,'<%=str(rowCabecera[posicion][1])%>');" onmousemove="showdiv(event,<%=str(rowCabecera[posicion][1])%>);" onmouseout="javascript:document.getElementById('capaFlotante').style.display='none';" onclick="consultaCeldaFecha('<%=cadenaTabla%>','<%=cadenaPKey%>','<%=str(rowCabecera[posicion][1])%>','<%=objetoMedioDiaAtras%>','<%=objetoMedioDiaAdelante%>')">
+				<%=objetoDate%>
+				</td>
+
+<%	
+	#end/if/elif/else
+%>
+
+			</tr>
+
+<%
+#end/for
+%>
+
+		</table>
+	</div><!--contenido-->
+	<div id="menu">
+		<form action="" method="post" name="formTablas">
+		<fieldset class="greenFieldSet">
+			<input type="hidden" name="posicion" value="<%=indice%>">
+			<input type="hidden" name="desplazar" value="=">
+				
+<%
+try:
+	cursorBD.execute('SELECT name FROM sqlite_master WHERE type="table"')
+	rows = cursorBD.fetchall()
+	conexionBD.close()
+except Exception,e:
+	sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+	sesionWeb.save()
+	util.redirect(req,"error.psp")
+#end/try
+%>
+
+			<select name="tablasDionaea" size="<%=len(rows)%>" onchange="document.formTablas.desplazar.value='=';document.formTablas.posicion.value='0';document.formTablas.submit()">
+
+<%
+for row in rows:
+	if (cadenaTabla == row[0]):
+%>		
+
+				<option value="<%=row[0]%>" selected> <%=row[0]%> </option>
+
+<%
+	else:
+%>
+
+				<option value="<%=row[0]%>"> <%=row[0]%> </option>
+
+<%
+	#end/if
+#end/for
+%>
+
+			</select>
+			<br />
+			<input type="submit" class="zetsuBoton" name="botonDesplazaTabla" value="<<" onclick="document.formTablas.desplazar.value='+';document.formTablas.tablasDionaea.value ='<%=cadenaTabla%>'">
+			<input type="submit" class="zetsuBoton" name="botonDesplazaTabla" value=">>" onclick="document.formTablas.desplazar.value='-';document.formTablas.tablasDionaea.value ='<%=cadenaTabla%>'">
+		</fieldset>
+		</form>	
+	</div><!--menu-->
+	<div id="pie">
+	</div><!--pie-->
+</div><!--pagina-->
+</body></html>

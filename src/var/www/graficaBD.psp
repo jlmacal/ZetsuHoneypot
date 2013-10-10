@@ -1,0 +1,201 @@
+<!--Copyright (C) 2013  Juan Luis Martin Acal
+
+Este programa es software libre: usted puede redistribuirlo y/o modificarlo
+bajo los términos de la Licencia Pública General GNU publicada
+por la Fundación para el Software Libre, ya sea la versión 3
+de la Licencia, o (a su elección) cualquier versión posterior.
+
+Este programa se distribuye con la esperanza de que sea útil, pero
+SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita
+MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO.
+Consulte los detalles de la Licencia Pública General GNU para obtener
+una información más detallada.
+
+Debería haber recibido una copia de la Licencia Pública General GNU
+junto a este programa.
+En caso contrario, consulte <http://www.gnu.org/licenses/>.
+
+
+                contact:  jlmacal@gmail.es
+-->
+
+<html> 
+<head>
+	<style type="text/css" media="all"> 
+		@import "zetsu.css";
+	</style>
+	<script type="text/javascript" src="js/jquery.min.js"></script> 
+	<script type="text/javascript" src="js/jquery.gchart.min.js"></script> 
+</head>
+<body>
+<div id="pagina">
+<%@ include file="./cabecera.psp"%>
+<%@ include file="./controlSesion.psp"%>
+
+	<div id="menu">
+		<form action="./graficaBD.psp" method="post" name="formGrafica">
+		<fieldset class="greenFieldSet">
+			<select name="graficasDionaea" size="2" onchange="document.formGrafica.submit()">
+				<option value="1"> Conexiones aceptadas </option>
+				<option value="2"> Conexiones rechazadas </option>>
+			</select>
+			<br />
+			<br />
+			<input class="graficaFormDivInput" value="" name="puerto1">
+			<input class="graficaFormDivInput" value="" name="puerto2">
+			<input class="graficaFormDivInput" value="" name="puerto3">
+			<br />
+			<input class="graficaFormDivInput" value="" name="puerto4">
+			<input class="graficaFormDivInput" value="" name="puerto5">
+			<input class="graficaFormDivInput" value="" name="puerto6">
+			<br />
+			<input class="graficaFormDivInput" value="" name="puerto7">
+			<input class="graficaFormDivInput" value="" name="puerto8">
+			<input class="graficaFormDivInput" value="" name="puerto9">
+			<br />
+			<input type="submit" class="zetsuBoton" value="Busca" name="botonBusca" >
+		</fieldset>
+		</form>
+	</div><!--menu-->
+	<div id="contenido">
+
+<%
+from pysqlite2 import dbapi2
+
+try:
+	conexionBDD = dbapi2.connect("/opt/dionaea/var/dionaea/logsql.sqlite")
+	cursorBDD = conexionBDD.cursor()
+	conexionBDK = dbapi2.connect("/opt/kippo/log/kippoBD.sqlite")
+	cursorBDK = conexionBDK.cursor()
+except Exception,e:
+	sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+	sesionWeb.save()
+	util.redirect(req,"error.psp")
+
+cadenaNumGrafica = form.getfirst('graficasDionaea')
+numGrafica = cadenaNumGrafica
+tamanoGrafica = "400px"
+
+cadenaPuerto1 = form.getfirst('puerto1')
+cadenaPuerto2 = form.getfirst('puerto2')
+cadenaPuerto3 = form.getfirst('puerto3')
+cadenaPuerto4 = form.getfirst('puerto4')
+cadenaPuerto5 = form.getfirst('puerto5')
+cadenaPuerto6 = form.getfirst('puerto6')
+cadenaPuerto7 = form.getfirst('puerto7')
+cadenaPuerto8 = form.getfirst('puerto8')
+cadenaPuerto9 = form.getfirst('puerto9')
+
+if((not numGrafica) and (not cadenaPuerto1) and (not cadenaPuerto2) and (not cadenaPuerto3) and (not cadenaPuerto4) and (not cadenaPuerto5) and (not cadenaPuerto6) and (not cadenaPuerto7) and (not cadenaPuerto8) and (not cadenaPuerto9)):
+	select1 = ''
+	select2 = ''
+	select3 = ''
+elif ((not numGrafica) and ((cadenaPuerto1<>"") or (cadenaPuerto2<>"") or (cadenaPuerto3<>"") or (cadenaPuerto4<>"") or (cadenaPuerto5<>"") or (cadenaPuerto6<>"") or (cadenaPuerto7<>"") or (cadenaPuerto8<>"") or (cadenaPuerto9<>""))):
+	if (cadenaPuerto1==""):
+		cadenaPuerto1 = "-1"
+	if (cadenaPuerto2==""):
+		cadenaPuerto2 = "-1"
+	if (cadenaPuerto3==""):
+		cadenaPuerto3 = "-1"
+	if (cadenaPuerto4==""):
+		cadenaPuerto4 = "-1"
+	if (cadenaPuerto5==""):
+		cadenaPuerto5 = "-1"
+	if (cadenaPuerto6==""):
+		cadenaPuerto6 = "-1"
+	if (cadenaPuerto7==""):
+		cadenaPuerto7 = "-1"
+	if (cadenaPuerto8==""):
+		cadenaPuerto8 = "-1"
+	if (cadenaPuerto9==""):
+		cadenaPuerto9 = "-1"
+	select1 = "SELECT DISTINCT local_port FROM connections WHERE local_port = "+ str(cadenaPuerto1) +" OR local_port = "+ str(cadenaPuerto2) +" OR local_port = "+ str(cadenaPuerto3) +" OR local_port = "+ str(cadenaPuerto4) +" OR local_port = " + str(cadenaPuerto5) +" OR local_port = "+ str(cadenaPuerto6) +" OR local_port = "+ str(cadenaPuerto7) +" OR local_port = "+ str(cadenaPuerto8) +" OR local_port = "+ str(cadenaPuerto9) +" GROUP BY local_port ORDER BY local_port ASC"
+	select2 = "SELECT COUNT(local_port) FROM connections WHERE local_port = "+ str(cadenaPuerto1) +" OR local_port = "+ str(cadenaPuerto2) +" OR local_port = "+ str(cadenaPuerto3) +" OR local_port = "+ str(cadenaPuerto4) +" OR local_port = " + str(cadenaPuerto5) +" OR local_port = "+ str(cadenaPuerto6) +" OR local_port = "+ str(cadenaPuerto7) +" OR local_port = "+ str(cadenaPuerto8) +" OR local_port = "+ str(cadenaPuerto9) +" GROUP BY local_port ORDER BY local_port ASC"
+elif (numGrafica == "1"):
+	select1 = 'SELECT DISTINCT local_port FROM connections WHERE connection_type="accept" and connection_protocol!="ftpdatalisten" GROUP BY local_port ORDER BY local_port ASC'
+	select2 = 'SELECT COUNT(local_port) FROM connections WHERE connection_type="accept" and connection_protocol!="ftpdatalisten" GROUP BY local_port ORDER BY local_port ASC'
+	select3 = 'SELECT COUNT(fechaTimeStamp) FROM tablaLogin'
+elif (numGrafica == "2"):
+	select1 = 'SELECT DISTINCT local_port FROM connections WHERE local_port="23" OR local_port="139" OR local_port="143" OR local_port="443" OR local_port="1080" OR local_port="3389" OR local_port="5900" OR local_port="8080" GROUP BY local_port ORDER BY local_port ASC'
+	select2 = 'SELECT COUNT(local_port) FROM connections WHERE local_port="23" OR local_port="139" OR local_port="143" OR local_port="443" OR local_port="1080" OR local_port="3389" OR local_port="5900" OR local_port="8080" GROUP BY local_port ORDER BY local_port ASC'
+
+try:
+	cursorBDD.execute(select1)
+	rows1 = cursorBDD.fetchall()
+	cursorBDD.execute(select2)
+	rows2 = cursorBDD.fetchall()
+	if (numGrafica == "1"):
+		cursorBDK.execute(select3)
+		rows3 = cursorBDK.fetchall()
+	conexionBDD.close()
+	conexionBDK.close()			
+except Exception,e:
+	sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+	sesionWeb.save()
+	util.redirect(req,"error.psp")
+	
+if (len(rows1) and len(rows2)):
+	if (numGrafica == "1"):
+		maximoValor = max(max(rows2),rows3[0])
+	else:
+		maximoValor = max(rows2)
+else:
+	maximoValor = "-1"
+#end/if/else
+%>
+
+
+<div id="basicGChart" style="width: <%=tamanoGrafica%>"></div>
+
+<script type="text/javascript"> 
+$(function () {
+	$('#basicGChart').gchart({
+		type:'barVertGrouped',
+		title: '', titleColor: '#ffffff',
+		backgroundColor: $.gchart.gradient('diagonalUp', 'transparent', 'transparent'),
+		maxValue: <%=maximoValor[0]%>,
+		series: [$.gchart.series([
+
+<%
+for row2 in rows2:
+%>		
+		<%=row2[0]%>,
+<%
+#end/for
+if (numGrafica == "1"):
+%>
+		<%=rows3[0][0]%>,
+<%
+#end/if
+%>
+	
+		],'#64e13799')],
+		
+		axes:[			
+			$.gchart.axis('left', 0, <%=maximoValor[0]%>, 'black', 'right'),
+			$.gchart.axis('bottom', [		
+
+<%
+for row1 in rows1:
+%>		
+		<%=row1[0]%>,
+<%
+#end/for
+if (numGrafica == "1"):
+%>
+		22,
+<%
+#end/if
+%>
+
+			
+			], 'black')
+		],});
+});
+</script>
+
+	</div><!--contenido-->
+	<div id="pie">
+	</div><!--pie-->
+</div><!--pagina-->
+</body></html>

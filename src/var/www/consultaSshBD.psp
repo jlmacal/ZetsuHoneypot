@@ -1,0 +1,255 @@
+
+<!--Copyright (C) 2013  Juan Luis Martin Acal
+
+Este programa es software libre: usted puede redistribuirlo y/o modificarlo
+bajo los términos de la Licencia Pública General GNU publicada
+por la Fundación para el Software Libre, ya sea la versión 3
+de la Licencia, o (a su elección) cualquier versión posterior.
+
+Este programa se distribuye con la esperanza de que sea útil, pero
+SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita
+MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO.
+Consulte los detalles de la Licencia Pública General GNU para obtener
+una información más detallada.
+
+Debería haber recibido una copia de la Licencia Pública General GNU
+junto a este programa.
+En caso contrario, consulte <http://www.gnu.org/licenses/>.
+
+
+                contact:  jlmacal@gmail.es
+-->
+
+<html>
+<head>
+	<style type="text/css" media="all"> 
+		@import "zetsu.css";
+	</style>
+	<script type="text/javascript" src="js/zetsuFunciones.js"></script>
+</head>
+<body>
+<div id="pagina">
+<%@ include file="./cabecera.psp"%>
+<%@ include file="./controlSesion.psp"%>
+
+	<div id="capaFlotante"><span id="posicion"></span></div>
+	<div id="contenido">
+		<center>
+			<form action="./consultaSshBD.psp" method="post" name="formConsultas">
+				<textarea name="consultaPersonalizada" cols="75%" rows="2"></textarea>
+				<br />
+				<input type="submit" class="zetsuBotonLargo" name="botonConsulta" value="Enviar consulta SQlite">
+				<input type="checkbox" name="opcionSimplificada" value="ok">Tabla Simplificada</input>
+			</form>
+		</center>
+		<table id="tablaConsulta">
+
+<%
+import re
+from pysqlite2 import dbapi2
+from datetime import datetime
+
+datosXconsulta = 20
+cadenaDesplazar = form.getfirst('desplazar')
+cadenaPosicion = form.getfirst('posicion')
+cadenaTabla = form.getfirst('tablasKippo')
+cadenaConsulta = form.getfirst('consultaPersonalizada')
+cadenaSimplificada = form.getfirst('opcionSimplificada')
+
+cadenaPKey="rowid"
+
+if (not cadenaDesplazar) and (not cadenaPosicion) and (not cadenaTabla):
+	cadenaTabla = 'tablaLogin'
+	indice = 0
+elif (cadenaDesplazar=="="):
+	indice = 0
+elif (cadenaDesplazar=="+"):
+	indice = int(cadenaPosicion) + datosXconsulta
+elif (cadenaDesplazar=="-"):
+	indice = int(cadenaPosicion) - datosXconsulta
+else:
+	cadenaTabla = 'tablaLogin'
+	indice = 0
+
+try:	
+	conexionBD = dbapi2.connect("/opt/kippo/log/kippoBD.sqlite")
+	cursorBD = conexionBD.cursor()
+except Exception,e:
+	sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+	sesionWeb.save()
+	util.redirect(req,"error.psp")
+
+try:
+	cursorBD.execute("pragma table_info('" + str(cadenaTabla) + "')")
+	rowCabecera = cursorBD.fetchall()
+except Exception,e:
+	sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+	sesionWeb.save()
+	util.redirect(req,"error.psp")
+	
+if (not cadenaConsulta):
+	try:
+		cursorBD.execute("SELECT MAX(rowid) FROM " + cadenaTabla)
+		maxIdTabla = cursorBD.fetchone()[0]
+	except Exception,e:
+		sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+		sesionWeb.save()
+		util.redirect(req,"error.psp")
+
+	if not maxIdTabla:
+		maxIdTabla = 0
+	if (maxIdTabla <= indice):
+		indice = maxIdTabla
+	if (indice < datosXconsulta):
+		indice = datosXconsulta
+
+	try:
+		cursorBD.execute("SELECT * FROM " + str(cadenaTabla) + " WHERE (" + cadenaPKey + "<=" + str( maxIdTabla - indice + 20) + " AND " + cadenaPKey + ">=" + str(maxIdTabla - indice) + " ) ORDER BY fechaTimeStamp DESC")
+		rows = cursorBD.fetchall()
+	except Exception,e:
+		sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+		sesionWeb.save()
+		util.redirect(req,"error.psp")
+else:
+
+	try:
+		cadenaTabla = re.findall('FROM ([a-zA-Z0-9\-\[\]\#\.\:\%\@\&\_]+) WHERE',cadenaConsulta)[0]
+		cursorBD.execute("PRAGMA TABLE_INFO('" + str(cadenaTabla) + "')")
+		rowCabecera = cursorBD.fetchall()
+		cadenaPKey=rowCabecera[0][1]
+	except Exception,e:
+		sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+		sesionWeb.save()
+		util.redirect(req,"error.psp")
+
+	try:
+		cursorBD.execute(cadenaConsulta)
+		rows = cursorBD.fetchall()
+	except Exception,e:
+		sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+		sesionWeb.save()
+		util.redirect(req,"error.psp")
+		
+for row in rows:
+	if (not cadenaSimplificada):
+%>
+
+			<tr>
+
+<%
+	else:
+%>
+
+			<br/>
+
+<%
+	#endif/else
+	for posicion in range(len(row)):
+		#if (not cadenaConsulta) and (str(rowCabecera[posicion][1])<>"fechaTimeStamp"):
+		if (not cadenaConsulta) and (type(row[posicion]).__name__<>"float"):
+%>
+
+				<td onmouseover="showdiv(event,'<%=str(rowCabecera[posicion][1])%>');" onmousemove="showdiv(event,<%=str(rowCabecera[posicion][1])%>);" onmouseout="javascript:document.getElementById('capaFlotante').style.display='none';" onclick="consultaCelda('<%=cadenaTabla%>','<%=cadenaPKey%>','<%=str(rowCabecera[posicion][1])%>','<%=unicode(row[posicion]).encode("utf-8")%>')">
+				<%=unicode(row[posicion]).encode("utf-8")%>
+				</td>
+
+<%
+		elif (not cadenaConsulta) and (type(row[posicion]).__name__=="float"):
+			objetoMedioDiaAtras= float(row[posicion])-86400.0
+			objetoMedioDiaAdelante=float(row[posicion])+86400.0
+			objetoDate=datetime.fromtimestamp(float(row[posicion])).strftime("%Y-%m-%d %H:%M:%S")
+%>
+
+				<td onmouseover="showdiv(event,'<%=str(rowCabecera[posicion][1])%>');" onmousemove="showdiv(event,<%=str(rowCabecera[posicion][1])%>);" onmouseout="javascript:document.getElementById('capaFlotante').style.display='none';" onclick="consultaCeldaFecha('<%=cadenaTabla%>','<%=cadenaPKey%>','<%=str(rowCabecera[posicion][1])%>','<%=objetoMedioDiaAtras%>','<%=objetoMedioDiaAdelante%>')">
+				<%=objetoDate%>
+				</td>
+
+<%
+		else:
+			if(not cadenaSimplificada) and (type(row[posicion]).__name__<>"float"):
+%>
+
+			<td onmouseover="showdiv(event,'<%=str(rowCabecera[posicion][1])%>');" onmousemove="showdiv(event,<%=str(rowCabecera[posicion][1])%>);" onmouseout="javascript:document.getElementById('capaFlotante').style.display='none';" onclick="consultaCelda('<%=cadenaTabla%>','<%=cadenaPKey%>','<%=str(rowCabecera[posicion][1])%>','<%=unicode(row[posicion]).encode("utf-8")%>')">
+			<%=unicode(row[posicion]).encode("utf-8")%>
+			</td>
+
+<%
+			elif (not cadenaSimplificada) and (type(row[posicion]).__name__=="float"):
+				objetoMedioDiaAtras= float(row[posicion])-86400.0
+				objetoMedioDiaAdelante=float(row[posicion])+86400.0
+				objetoDate=datetime.fromtimestamp(float(row[posicion])).strftime("%Y-%m-%d %H:%M:%S")
+%>
+
+			<td onmouseover="showdiv(event,'<%=str(rowCabecera[posicion][1])%>');" onmouseout="javascript:document.getElementById('capaFlotante').style.display='none';" onclick="consultaCeldaFecha('<%=cadenaTabla%>','<%=cadenaPKey%>','<%=str(rowCabecera[posicion][1])%>','<%=objetoMedioDiaAtras%>','<%=objetoMedioDiaAdelante%>')">
+			<%=objetoDate%>
+			</td>
+
+<%			
+			else:
+%>
+
+			<%=unicode(row[posicion]).encode("utf-8")%>
+
+<%
+		#end/if/elif/else
+	#end/if/elif/else
+	if (not cadenaSimplificada):
+%>
+
+		</tr>
+
+<%
+#end/if/for
+%>
+	
+		</table>
+	</div>
+	<div id="menu">
+		<form action="./consultaSshBD.psp" method="post" name="formTablas">
+		<fieldset class="greenFieldSet">
+			<input type="hidden" name="posicion" value="<%=indice%>">
+			<input type="hidden" name="desplazar" value="=">
+
+<%
+try:
+	cursorBD.execute('SELECT name FROM sqlite_master WHERE type="table"')
+	rows = cursorBD.fetchall()
+	conexionBD.close()
+except Exception,e:
+	sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+	sesionWeb.save()
+	util.redirect(req,"error.psp")
+#end/try
+%>
+
+			<select name="tablasKippo" size="<%=len(rows)%>" onchange="document.formTablas.desplazar.value='=';document.formTablas.posicion.value='0';document.formTablas.submit()">
+
+<%
+for row in rows:
+	if (cadenaTabla == row[0]):
+%>		
+
+				<option value="<%=row[0]%>" selected> <%=row[0]%> </option>
+
+<%
+	else:
+%>
+
+				<option value="<%=row[0]%>"> <%=row[0]%> </option>
+
+<%
+	#end/if
+#end/for/
+%>
+
+			</select>
+			<br />
+			<input type="submit" class="zetsuBoton" name="botonDesplazaTabla" value="<<" onclick="document.formTablas.desplazar.value='+';document.formTablas.tablasKippo.value ='<%=cadenaTabla%>'">
+			<input type="submit" class="zetsuBoton" name="botonDesplazaTabla" value=">>" onclick="document.formTablas.desplazar.value='-';document.formTablas.tablasKippo.value ='<%=cadenaTabla%>'">
+		</fieldset>
+		</form>
+	</div>
+	<div id="pie">
+	</div>
+</div>
+</body></html>

@@ -1,0 +1,207 @@
+<!--Copyright (C) 2013  Juan Luis Martin Acal
+
+Este programa es software libre: usted puede redistribuirlo y/o modificarlo
+bajo los términos de la Licencia Pública General GNU publicada
+por la Fundación para el Software Libre, ya sea la versión 3
+de la Licencia, o (a su elección) cualquier versión posterior.
+
+Este programa se distribuye con la esperanza de que sea útil, pero
+SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita
+MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO.
+Consulte los detalles de la Licencia Pública General GNU para obtener
+una información más detallada.
+
+Debería haber recibido una copia de la Licencia Pública General GNU
+junto a este programa.
+En caso contrario, consulte <http://www.gnu.org/licenses/>.
+
+
+                contact:  jlmacal@gmail.es
+-->
+
+<html>
+<head>
+	<style type="text/css" media="all"> 
+		@import "zetsu.css";
+	</style>	
+</head>
+<body>
+<div id="pagina">
+<%@ include file="./cabecera.psp"%>
+<%@ include file="./controlSesion.psp"%>
+
+<%
+import re
+import string
+import commands
+import hashlib
+from pysqlite2 import dbapi2
+
+try:
+	conexionBD = dbapi2.connect("/opt/zetsuBd/zetsu.sqlite")
+	cursorBD = conexionBD.cursor()
+except Exception,e:
+	sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+	sesionWeb.save()
+	util.redirect(req,"error.psp")
+
+sesionWeb = ""
+dionaeaPID = ""
+cadenaServiciosNew = ""
+dionaeaConfNew = ""
+cadenaPerfilSeleccionado = ""
+
+cadenaAltaBaja = form.getfirst('altaBaja')
+
+if (cadenaAltaBaja=="alta"):
+
+	cadenaUsernameSeleccionado = form.getfirst('usernameSeleccionado')
+	cadenaPasswordSeleccionado = form.getfirst('passwordSeleccionado')
+	cadenaClave = hashlib.sha512(cadenaPasswordSeleccionado).hexdigest()
+	cadenaPerfilSeleccionado = form.getfirst('listaPerfiles')
+
+	try:
+		cursorBD.execute("INSERT INTO 'login' ('username','password','rol') VALUES ('" + cadenaUsernameSeleccionado + "','" + cadenaClave + "','" + cadenaPerfilSeleccionado + "')")
+		conexionBD.commit()
+	except Exception,e:
+		sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+		sesionWeb.save()
+		util.redirect(req,"error.psp")
+	
+elif (cadenaAltaBaja=="baja"):
+
+	cadenaUsernameSeleccionado = form.getfirst('usernameSeleccionado')
+	
+	try:
+		cursorBD.execute("DELETE FROM 'login' WHERE username='" + cadenaUsernameSeleccionado + "'")
+		conexionBD.commit()
+	except Exception,e:
+		sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+		sesionWeb.save()
+		util.redirect(req,"error.psp")
+
+#end/try/if
+%>
+
+	<div id="menu">
+		<form action="" method="post" name="formAltasBajas">
+			<fieldset class="greenFieldSet">
+			<label class="confFormDivLabel">Nombre de usuario:</label>
+			<input class="confFormDivInput" name="usernameSeleccionado" value="None" required>
+			<br />
+			<label class="confFormDivLabel">Password:</label>
+			<input type="password" class="confFormDivInput" name="passwordSeleccionado" value="None" required>
+			<br />
+			<label class="confFormDivLabel">Perfil:</label>
+			<select class="confFormDivInput" name="listaPerfiles" size="1" onchange="">
+				<option value="operador"> Operador </option>
+				<option value="administrador"> Administrador </option>
+			</select>
+			<br />
+			<input type="hidden" name="altaBaja" value="">
+			<input type="submit" class="zetsuBoton" value="Alta" name="botonAlta" onclick="document.formAltasBajas.altaBaja.value='alta'">
+			<input type="submit" class="zetsuBoton" value="Baja" name="botonBaja" onclick="document.formAltasBajas.altaBaja.value='baja'">
+			<br />
+			<label class="confFormDivLabel">Usuarios Registrados</label>
+
+<%
+try:
+	cursorBD.execute("SELECT username FROM login")
+	rows = cursorBD.fetchall()
+	conexionBD.close()
+except Exception,e:
+	sesionWeb['exceptionErrorMsg']="EXCEPCION: " + str(e)
+	sesionWeb.save()
+	util.redirect(req,"error.psp")
+#end/try
+%>
+
+			<select name="listaUsuarios" size="<%=len(rows)%>" onchange="">
+
+<%
+for row in rows:
+%>
+
+				<option value="<%=row[0]%>"> <%=row[0]%> </option>
+
+<%
+#end/for
+%>
+
+			</select>
+			</fieldset>
+		</form>
+	</div><!--menu-->
+
+<%
+serviciosDionaea = ["http", "https", "tftp", "ftp", "mirror", "smb", "epmap", "sip", "mssql", "mysql"]
+patronServiciosDionaeaActuales = re.compile('serve = \[([a-z\s\"\,]+)\]')
+
+cadenaModificarConf = form.getfirst('modificarConf')
+if (cadenaModificarConf=="1"):
+
+	archivoDionaeaConf = open("/opt/dionaea/etc/dionaea/dionaea.conf","r")
+	dionaeaConf = archivoDionaeaConf.read()
+	archivoDionaeaConf.close()
+
+	#dionaeaPID = commands.getoutput("ps -e | grep dionaea | tr -s ' ' | cut -d' ' -f 2").split()
+	#os.system("sudo kill -9 $(ps -e | grep dionaea | tr -s ' ' | cut -d ' ' -f 2 | head -1)")
+	os.system("sudo /opt/scriptsCronJobs/offDionaea.sh")
+	
+	cadenaServiciosNew = "serve = ["
+	for servicioDionaea in serviciosDionaea:
+		if (form.getfirst(servicioDionaea)!=None):
+			cadenaServiciosNew = cadenaServiciosNew + '"' + str(form.getfirst(servicioDionaea)) + '"' + ',' 
+	
+	cadenaServiciosNew = cadenaServiciosNew + "]"
+	cadenaServiciosNew = re.sub(',]',']',cadenaServiciosNew)
+	dionaeaConfNew = re.sub('serve = \[([a-z\s\"\,]+)\]',cadenaServiciosNew,dionaeaConf)
+	
+	archivoDionaeaConf = open("/opt/dionaea/etc/dionaea/dionaea.conf","w")
+	archivoDionaeaConf.write(dionaeaConfNew)
+	archivoDionaeaConf.close()
+	os.system("sudo /opt/scriptsCronJobs/onDionaea.sh")
+
+archivoDionaeaConf = open("/opt/dionaea/etc/dionaea/dionaea.conf","r")
+dionaeaConf = archivoDionaeaConf.read()
+archivoDionaeaConf.close()
+%>
+
+	<div id="menu">
+		<form action="./configuracion.psp" method="post" name="formConfiguracion">
+		<fieldset class="greenFieldSet">
+
+<%
+serviciosDionaeaActuales = str(re.findall(patronServiciosDionaeaActuales,dionaeaConf)).replace(' ','').replace('"','').replace("['",'').replace("']",'').split(',')
+for servicio in serviciosDionaea:
+	if (servicio in serviciosDionaeaActuales):
+%>		
+
+				<label class="confFormDivLabel"><%=servicio%></label>
+				<input class="confFormCheckBox" type="checkbox" name="<%=servicio%>" value="<%=servicio%>" checked><br />
+
+<%
+	else:
+%>	
+
+				<label class="confFormDivLabel"><%=servicio%></label>
+				<input class="confFormCheckBox" type="checkbox" name="<%=servicio%>" value="<%=servicio%>"><br />
+
+<%
+#end/for/if/else
+%>
+
+				<br />
+				<input type="hidden" name="modificarConf" value="1">
+				<input type="submit" class="zetsuBotonLargo" name="botonModificaConf" value="Modifica"> 
+			</fieldset>
+			</form>
+	</div><!--menu-->
+	
+	<!--<div id="contenido"></div>--><!--contenido-->
+	
+	<div id="pie">
+	</div><!--pie-->
+</div><!--pagina-->
+</body>
+</html>

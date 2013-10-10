@@ -1,0 +1,71 @@
+<!--Copyright (C) 2013  Juan Luis Martin Acal
+
+Este programa es software libre: usted puede redistribuirlo y/o modificarlo
+bajo los términos de la Licencia Pública General GNU publicada
+por la Fundación para el Software Libre, ya sea la versión 3
+de la Licencia, o (a su elección) cualquier versión posterior.
+
+Este programa se distribuye con la esperanza de que sea útil, pero
+SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita
+MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO.
+Consulte los detalles de la Licencia Pública General GNU para obtener
+una información más detallada.
+
+Debería haber recibido una copia de la Licencia Pública General GNU
+junto a este programa.
+En caso contrario, consulte <http://www.gnu.org/licenses/>.
+
+
+                contact:  jlmacal@gmail.es
+-->
+
+<%
+from mod_python import Session, util
+sesionWeb = Session.Session(req,timeout=86400)
+%>
+
+<div id="cabecera">
+	<div id="logotipoI"></div>
+		<div id="logotipoD"></div>
+		<div id="navegador">
+		<table id="tablaNavegador">
+			<tr>
+
+<%
+try:
+	if(sesionWeb['sesion'] != "granted"):
+%>
+
+				<!--
+				<td onmouseover="javascript:this.style.background='#808080';" onmouseout="javascript:this.style.background='#c0c0c0';"><a href="/login.psp">Login</a></td>
+				-->
+				
+<%
+	else:
+%>
+				<td><a href="/login.psp">UnLogin</a></td>
+				<td><a href="/monitorBD.psp">Monitor</a></td>
+				<td><a href="/consultaBD.psp">Tablas</a></td>
+				<td><a href="/consultaSshBD.psp">TablasSSH</a></td>
+				<td><a href="/graficaBD.psp">Estadisticas</a></td>
+<%
+		if (sesionWeb['rol']=='administrador'):
+%>
+
+				<td><a href="/configuracion.psp">Configuracion</a></td>
+
+<%
+except:
+%>
+
+				<!--
+				-->
+
+<%
+#end/try
+%>
+				
+				</tr>
+		</table>
+	</div><!--navegador-->
+</div><!--cabecera-->
