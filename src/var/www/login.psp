@@ -97,7 +97,7 @@ elif (sesionWeb['sesion']=="postLogin"):
 			try:
 				consultaLogin = (cadenaClave==row[0][1])
 			except Exception,e:
-				sesionWeb['exceptionErrorMsg']="ERROR2: Usuario/Clave incorrectos"
+				sesionWeb['exceptionErrorMsg']="ERROR: Usuario/Clave incorrectos"
 				sesionWeb.save()
 				util.redirect(req,"error.psp")
 			else:
@@ -107,7 +107,7 @@ elif (sesionWeb['sesion']=="postLogin"):
 					sesionWeb.save()
 					util.redirect(req,"consultaBD.psp")
 				else:
-					sesionWeb['exceptionErrorMsg']="ERROR1: Usuario/Clave incorrectos"
+					sesionWeb['exceptionErrorMsg']="ERROR: Usuario/Clave incorrectos"
 					sesionWeb.save()
 					util.redirect(req,"error.psp")
 else:
