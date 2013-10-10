@@ -110,9 +110,9 @@ def resultadoToBinRes(resultado):
 
 def parseaLog(rutaBD,nombreLog):
 	
-	#2011-04-19 13:36:50+0200 [SSHService ssh-userauth on HoneyPotTransport,1,150.214.21.31] login attempt [root/123] failed
-	#2011-04-19 13:36:58+0200 [SSHChannel session (0) on SSHService ssh-connection on HoneyPotTransport,1,150.214.21.31] CMD: prueba2
-	#2011-04-19 13:36:44+0200 [HoneyPotTransport,1,150.214.21.31] Remote SSH version: SSH-2.0-PuTTY_Release_0.60
+	#2011-04-19 13:36:50+0200 [SSHService ssh-userauth on HoneyPotTransport,1,150.214.x.y] login attempt [root/123] failed
+	#2011-04-19 13:36:58+0200 [SSHChannel session (0) on SSHService ssh-connection on HoneyPotTransport,1,150.214.x.y] CMD: prueba2
+	#2011-04-19 13:36:44+0200 [HoneyPotTransport,1,150.214.x.y] Remote SSH version: SSH-2.0-PuTTY_Release_0.60
 	
 	try:
 		archivoLog=open(nombreLog,"r")
