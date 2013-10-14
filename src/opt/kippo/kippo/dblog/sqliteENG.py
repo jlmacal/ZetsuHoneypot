@@ -1,21 +1,18 @@
 """
 Copyright (C) 2013  Juan Luis Martin Acal
 
-Este programa es software libre: usted puede redistribuirlo y/o modificarlo
-bajo los terminos de la Licencia Publica General GNU publicada
-por la Fundacion para el Software Libre, ya sea la version 3
-de la Licencia, o (a su eleccion) cualquier version posterior.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-Este programa se distribuye con la esperanza de que sea util, pero
-SIN GARANTIA ALGUNA; ni siquiera la garantia implicita
-MERCANTIL o de APTITUD PARA UN PROPOSITO DETERMINADO.
-Consulte los detalles de la Licencia Publica General GNU para obtener
-una informacion mas detallada.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-Deberia haber recibido una copia de la Licencia Publica General GNU
-junto a este programa.
-En caso contrario, consulte <http://www.gnu.org/licenses/>.
-
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
                 contact:  jlmacal@gmail.es
 """
