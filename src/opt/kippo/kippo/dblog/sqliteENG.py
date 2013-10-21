@@ -64,7 +64,7 @@ class DBLogger(dblog.DBLogger):
 				connectionBD.close()
 			except Exception,e:
 				print '[EXCEPTION]' + str(e)
-				return	
+				return
 
 	def write(self, session, msg):
 		###TESTING
