@@ -49,13 +49,11 @@ div#pagina div#cabecera div#logotipoI {
 	float: left;
 	width: 200px;
 	height: 60px;
-	background-image: url(./imagenes/logoUgr.jpg);
 }
 div#pagina div#cabecera div#logotipoD {
 	float: right;
 	width: 200px;
 	height: 60px;
-	background-image: url(./imagenes/logoCsirc.jpg);
 	background-repeat: no-repeat;
 }
 div#pagina div#cabecera div#navegador {
@@ -118,7 +116,6 @@ div#pagina div#contenido {
 	margin: auto;
 	float: right;
 	width: 75%;
-	background-image: url(./imagenes/logoUgr.gif);
 	background-position: center;
 	background-repeat: no-repeat;
 }
@@ -128,7 +125,6 @@ div#pagina div#contenidoMonitor {
 	margin: auto;
 	float: center;
 	width: 100%;
-	background-image: url(./imagenes/logoUgr.gif);
 	background-position: center;
 	background-repeat: no-repeat;
 }
