@@ -17,7 +17,7 @@ junto a este programa.
 En caso contrario, consulte <http://www.gnu.org/licenses/>.
 
 
-                contact:  jlmacal@gmail.es
+                contact:  jlmacal@gmail.com
 */
 
 CREATE TABLE "tablaSesionesOnline" (

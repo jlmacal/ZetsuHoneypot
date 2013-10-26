@@ -1,0 +1,23 @@
+El disco VDI para VirtualBox esta colgado y comprimido en los siguientes enlaces. 
+
+PROXIMAMENTE LA IMG DE RASPBERRY PI
+
+IMPORTANTE:
+Hay dos usuarios de sistema, root y zetsu, por defecto la clave que les he dado es zetsu, CAMBIALA
+Hay un administrador para la aplicación web, también zetsu y clave zetsu. CAMBIALO.
+	Entra como el administrador,  zetsu.
+	Crea un administrador en la seccion de configuracion
+		Escribes el username que quieras y su clave, seleccionas administrador, pulsas alta.
+		Pones en nombre de usuario zetsu, pulsa baja.
+
+zetsu.part01.rar (700.0 MB)
+https://mega.co.nz/#!GUAU2Bjb!FHV7LgsgFGcBf9JZIY8boWXPbe9J822bf1Rds0Zv_Qc
+
+zetsu.part02.rar (700.0 MB)
+https://mega.co.nz/#!uUBxiZjY!JIZCJEgZjRP5KmDsOFA2vhO0alpNFd7lyauDnTqkS6o
+
+zetsu.part03.rar (700.0 MB)
+https://mega.co.nz/#!TJpHAKyJ!HOolb3KcRLyLK_mE2IgtLFxdG3VgyZCKhkUkfqL2OJs
+
+zetsu.part04.rar (231.9 MB)
+https://mega.co.nz/#!qU5TybiR!Gh_sCWQKqK-uiwAKBokA_AtPUl8EQRay4F08IyUiiSE

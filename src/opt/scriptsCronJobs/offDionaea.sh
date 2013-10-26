@@ -16,7 +16,7 @@
 #En caso contrario, consulte <http://www.gnu.org/licenses/>.
 #
 #
-#                contact:  jlmacal@gmail.es
+#                contact:  jlmacal@gmail.com
 #
 
 #!/bin/bash
