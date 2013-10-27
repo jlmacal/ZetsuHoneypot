@@ -4,7 +4,7 @@ PROXIMAMENTE LA IMG DE RASPBERRY PI
 
 IMPORTANTE_1:
 Hay dos usuarios de sistema, root y zetsu, por defecto la clave que les he dado es zetsu, CAMBIALA
-Hay un administrador para la aplicaci�n web, tambi�n zetsu y clave zetsu. CAMBIALO.
+Hay un administrador para la aplicacion web, tambien zetsu y clave zetsu. CAMBIALO.
 	Entra como el administrador,  zetsu.
 	Crea un administrador en la seccion de configuracion
 		Escribes el username que quieras y su clave, seleccionas administrador, pulsas alta.
