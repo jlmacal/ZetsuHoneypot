@@ -28,7 +28,7 @@ En caso contrario, consulte <http://www.gnu.org/licenses/>.
 <body>
 <div id="pagina">
 <%@ include file="./cabecera.psp"%>
-<center><img src="./imagenes/cabecera.jpg"></center>
+<center><img src="./imagenes/cabeceraZetsu.jpg"></center>
 
 <%
 import hashlib
