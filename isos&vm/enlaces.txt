@@ -2,13 +2,24 @@ El disco VDI para VirtualBox esta colgado y comprimido en los siguientes enlaces
 
 PROXIMAMENTE LA IMG DE RASPBERRY PI
 
-IMPORTANTE:
+IMPORTANTE_1:
 Hay dos usuarios de sistema, root y zetsu, por defecto la clave que les he dado es zetsu, CAMBIALA
-Hay un administrador para la aplicación web, también zetsu y clave zetsu. CAMBIALO.
+Hay un administrador para la aplicaciï¿½n web, tambiï¿½n zetsu y clave zetsu. CAMBIALO.
 	Entra como el administrador,  zetsu.
 	Crea un administrador en la seccion de configuracion
 		Escribes el username que quieras y su clave, seleccionas administrador, pulsas alta.
 		Pones en nombre de usuario zetsu, pulsa baja.
+
+IMPORTANTE_2:
+Kippo, escucha al puerto 2222, este es redireccionado mediante iptables al 22 en /etc/init.d/kippo.sh.
+Si no funciona la redireccion posiblemente sea que udev asigno una  nueva ethX a la interfaces de red de
+tu maquina virtual recien creada.
+
+SOLUCION
+Elimina la anterior eth0 y renombra eth1 como eth0 en
+/etc/udev/rules.d/70-persistent-net.rules
+
+ENLACES DE DESCARGA
 
 zetsu.part01.rar (700.0 MB)
 https://mega.co.nz/#!GUAU2Bjb!FHV7LgsgFGcBf9JZIY8boWXPbe9J822bf1Rds0Zv_Qc
