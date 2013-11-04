@@ -1,25 +1,9 @@
-El disco VDI para VirtualBox esta colgado y comprimido en los siguientes enlaces. 
+Finalmente este es el trabajo liberado al completo.
+https://github.com/jlmacal/ZetsuHoneypot
 
-PROXIMAMENTE LA IMG DE RASPBERRY PI
+Virtual Disk Image (VBox)
 
-IMPORTANTE_1:
-Hay dos usuarios de sistema, root y zetsu, por defecto la clave que les he dado es zetsu, CAMBIALA
-Hay un administrador para la aplicacion web, tambien zetsu y clave zetsu. CAMBIALO.
-	Entra como el administrador,  zetsu.
-	Crea un administrador en la seccion de configuracion
-		Escribes el username que quieras y su clave, seleccionas administrador, pulsas alta.
-		Pones en nombre de usuario zetsu, pulsa baja.
-
-IMPORTANTE_2:
-Kippo, escucha al puerto 2222, este es redireccionado mediante iptables al 22 en /etc/init.d/kippo.sh.
-Si no funciona la redireccion posiblemente sea que udev asigno una  nueva ethX a la interfaces de red de
-tu maquina virtual recien creada.
-
-SOLUCION
-Elimina la anterior eth0 y renombra eth1 como eth0 en
-/etc/udev/rules.d/70-persistent-net.rules
-
-ENLACES DE DESCARGA
+1- Descargar, descomprimir y crear la maquina virtual utilizando la imagen como disco
 
 zetsu.part01.rar (700.0 MB)
 https://mega.co.nz/#!GUAU2Bjb!FHV7LgsgFGcBf9JZIY8boWXPbe9J822bf1Rds0Zv_Qc
@@ -32,3 +16,60 @@ https://mega.co.nz/#!TJpHAKyJ!HOolb3KcRLyLK_mE2IgtLFxdG3VgyZCKhkUkfqL2OJs
 
 zetsu.part04.rar (231.9 MB)
 https://mega.co.nz/#!qU5TybiR!Gh_sCWQKqK-uiwAKBokA_AtPUl8EQRay4F08IyUiiSE
+
+2- Cambiar credenciales por defecto 
+
+Usuarios: root y zetsu
+Password: zetsu (CAMBIALAS)
+
+Aplicacion de control: https://x.y.z.v:4093/login.psp
+
+Admin: zetsu (ELIMINALO Y CREA UNO NUEVO)
+Password: zetsu
+
+3- Crear un nuevo administrador
+
+	Entra como el administrador,  zetsu.
+	Crea un administrador en la seccion de configuracion
+	Escribes el nuevo username y su clave, seleccionas rol como administrador, pulsas alta.
+	Pones en nombre de usuario zetsu y pulsa baja.
+
+RaspberryPi SDCard 8GB
+
+1- Descargar y descomprimir
+
+zetsuPi.part01.rar
+https://mega.co.nz/#!KEBUgDIT!YBmsblyrL_7coc5FmZosJ2Kq-DghsmR13Pqau-gMoe4
+
+zetsuPi.part02.rar
+https://mega.co.nz/#!7cBCRJxC!TqE4ED8yjuk1a_T1Q6TZv1jKI0obTODmNUAzBX5m7pU
+
+zetsuPi.part03.rar
+https://mega.co.nz/#!fN4yzYJZ!WeM_xWp1Rg2lhNnzdilDmRUbKC9EzKRmly81yUfWzgE
+
+Grabar la imagen en una SDCard
+
+Linux:
+	Descubrimos el dispositivo asignado a nuestra SDCard: fdisk -l 
+	Grabamos: dd bs=4M if=zetsupi.img of=/dev/sdX dispositivo_descubierto_en_el_paso_anterior
+
+Windos:
+	Grabamos con http://sourceforge.net/projects/win32diskimager/ por ejemplo.
+
+2- Cambiar credenciales por defecto 
+
+Usuarios: root y zetsu
+Password: zetsupi (CAMBIALAS)
+
+Aplicacion de control: https://x.y.z.v:4093/login.psp
+
+Admin: zetsu (ELIMINALO Y CREA UNO NUEVO)
+Password: zetsu
+
+3- Crear un nuevo administrador
+
+Entra como el administrador,  zetsu.
+Crea un administrador en la seccion de configuracion
+Escribes el nuevo username y su clave, seleccionas rol como administrador, pulsas alta.
+
+Pones en nombre de usuario zetsu y pulsa baja.
