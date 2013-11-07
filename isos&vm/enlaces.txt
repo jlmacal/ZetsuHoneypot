@@ -20,11 +20,11 @@ https://mega.co.nz/#!qU5TybiR!Gh_sCWQKqK-uiwAKBokA_AtPUl8EQRay4F08IyUiiSE
 2- Cambiar credenciales por defecto 
 
 Usuarios: root y zetsu
-Password: zetsu (CAMBIALAS)
+Password: zetsu (CAMBIALAS POR SEGURIDAD)
 
 Aplicacion de control: https://x.y.z.v:4093/login.psp
 
-Admin: zetsu (ELIMINALO Y CREA UNO NUEVO)
+Admin: zetsu (ELIMINALO Y CREA UNO NUEVO POR SEGURIDAD)
 Password: zetsu
 
 3- Crear un nuevo administrador

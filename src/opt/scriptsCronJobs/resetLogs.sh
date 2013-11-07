@@ -25,3 +25,4 @@ cat /dev/null > /opt/dionaea/var/log/dionaea-errors.log
 cat /dev/null > /opt/dionaea/var/dionaea/downloads.f2b
 cat /dev/null > /opt/dionaea/var/dionaea/offers.f2b
 cat /dev/null > /tmp/p0f.log
+rm -f /opt/kippo/log/kippo.log.*
